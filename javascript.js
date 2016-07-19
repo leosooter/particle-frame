@@ -1,18 +1,22 @@
 /* Key for each particle type:
+
     count : Sets the total number of particles of this type created by the createParticle function
     
     startingPoint : Sets the id of the element the particles will frame when page loads.
-    
+
+    hoverClass : This is the class assigned to any element in the DOM to trigger hover effect by this particle type on mouseover
+
     speed : Average time in ms each particle will take to move to a new location. 
             The speed of each particle is set randomly by the newParticle function, plus or minus 1.25X this value
             
-    cssClass : Sets a css class for styling the particle.  Also used to set the anchor element where the particle divs are created in the DOM.
-               The id of the anchor element in the DOM must be the particles cssClass + "-anchor". ie. "menu-particle-anchor"
+    cssClass : Optional- Sets a css class for styling the particle. All particles are also assigned the class "particle" for general styling.
     
-    hoverClass : This is the class assigned to any element in the DOM to trigger hover effect by this particle type on mouseover
     
-    containerClass : Sets the element that conatins the "mouseover" targets for this particle type.
+
+    
+    containerClass : Optional- Sets the element that conatins the "mouseover" targets for this particle type.
                      Particles return to "startingPoint" when the cursor leaves this container
+                     If not set, the particles will remain framing the last valid element that was hovered.
 
     height : Sets the height for the particle div
 
@@ -31,37 +35,56 @@
                 "linear"- each particle will move only horizontaly or vertically if the element they are moving to is on the same y or x axis
                 "random"- each particle will be move in a random curve to the new element
 */
+
+
 var particleType = {
-    
+    /*Use the default particle types below or add your own.
+    New particle types must have a unique "hoverClass" assigned. All other variables are optional and will be assigned default values if
+    skipped or left blank */
+
     menuParticle : {
+        hoverClass : "menu-particle-hover",
         count : 200,
-        startingPoint : "menu1",
+        startingPoint : "menu-home",
         speed : 500,
         cssClass : "menu-particle",
-        hoverClass : "menu-particle-hover",
         containerClass : "menu-particle-container",
         height : 2,
         width : 2,
         zIndex : -1000,
-        colors : ['#ff9933'],
+        colors : ['green'],
         paths : ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out', 'cubic-bezier(.11,1.3,.72,1.3)'],
         movement : "random",
         currentLocation : {},
     },
     
     contentParticle : {
+        hoverClass: "content-particle-hover",
         count : 900,
-        startingPoint : "content-divider",
+        startingPoint : "article1",
         speed : 500,
         cssClass : "content-particle",
-        hoverClass: "content-particle-hover",
         containerClass : "content-particle-container",
         height : 2,
         width : 2,
         zIndex : -1000,
-        colors : ['#0066ff'],
+        colors : ['lightblue'],
         paths : ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out'],
         movement : "linear",
+        currentLocation : {},
+    },
+    //Provides defualt values for any variables omitted or left blank.  Defaults can be changed, but do not remove.
+    defaultParticle : {
+        count : 200,
+        startingPoint : "",
+        speed : 500,
+        containerClass : "menu-particle-container",
+        height : 2,
+        width : 2,
+        zIndex : -1000,
+        colors : ['red'],
+        paths : ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out', 'cubic-bezier(.11,1.3,.72,1.3)'],
+        movement : "random",
         currentLocation : {},
     },
 };
@@ -126,14 +149,22 @@ function validateParticle(type){
     console.log("Starting point = " + startingPoint);
     
     if (particleCount > 0 && hoverCount > 0 && startingPoint != null){
-        console.log("true");
+        console.log("Patricle type " + type + " is valid");
         return true;
     }
-    else{
-        console.log("false");
+    else if(particleCount <= 0){
+        console.warn("Particle type" + type + " has a count of zero");
         return false;
     }
-}
+    else if(!hoverCount){
+        console.warn("No elements have been assigned a hover class for particle type" + type);
+        return false;
+    }
+    else if(startingPoint = null){
+        console.warn("Particle type" + type + " does not have a valid starting point");
+        return false;
+    }
+};
 
 // Creates all of the particles used on the page and moves them to their start position
 window.addEventListener('load', function(){
