@@ -164,7 +164,7 @@ function validateParticle(type){
         console.warn("Particle type" + type + " does not have a valid starting point");
         return false;
     }
-};
+}
 
 // Creates all of the particles used on the page and moves them to their start position
 window.addEventListener('load', function(){
@@ -200,6 +200,10 @@ function createParticles(type){
     for (i = 0; i < type.count; i++){
         var newDiv = document.createElement("div");
         newDiv.setAttribute("class", "particle " + type.cssClass);
+        newDiv.style.position = "absolute";
+        newDiv.style.zIndex = type.zIndex;
+        newDiv.style.height = type.height + "px";
+        newDiv.style.width = type.width + "px";
         newDiv.style.backgroundColor = randArray(type.colors);
         document.getElementById("particle-anchor").appendChild(newDiv);
     }
